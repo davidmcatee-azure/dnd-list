@@ -11,6 +11,7 @@ module Gallery.Root exposing
     )
 
 import CustomElement
+import Gallery.CopyFromTemplate
 import Gallery.Hanoi
 import Gallery.Knight
 import Gallery.Puzzle
@@ -38,6 +39,7 @@ type Example
     | Knight Gallery.Knight.Model
     | TryOn Gallery.TryOn.Model
     | TaskBoard Gallery.TaskBoard.Model
+    | CopyFromTemplate Gallery.CopyFromTemplate.Model
 
 
 init : String -> ( Model, Cmd Msg )
@@ -56,6 +58,7 @@ type Msg
     | KnightMsg Gallery.Knight.Msg
     | TryOnMsg Gallery.TryOn.Msg
     | TaskBoardMsg Gallery.TaskBoard.Msg
+    | CopyFromTemplateMsg Gallery.CopyFromTemplate.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -78,6 +81,9 @@ update message model =
 
         ( TaskBoardMsg msg, TaskBoard mo ) ->
             stepTaskBoard (Gallery.TaskBoard.update msg mo)
+
+        ( CopyFromTemplateMsg msg, CopyFromTemplate mo ) ->
+            stepCopyFromTemplate (Gallery.CopyFromTemplate.update msg mo)
 
         _ ->
             ( model, Cmd.none )
@@ -113,6 +119,11 @@ stepTaskBoard ( mo, cmds ) =
     ( TaskBoard mo, Cmd.map TaskBoardMsg cmds )
 
 
+stepCopyFromTemplate : ( Gallery.CopyFromTemplate.Model, Cmd Gallery.CopyFromTemplate.Msg ) -> ( Model, Cmd Msg )
+stepCopyFromTemplate ( mo, cmds ) =
+    ( CopyFromTemplate mo, Cmd.map CopyFromTemplateMsg cmds )
+
+
 
 -- SUBSCRIPTIONS
 
@@ -137,6 +148,9 @@ subscriptions model =
 
         TaskBoard mo ->
             Sub.map TaskBoardMsg (Gallery.TaskBoard.subscriptions mo)
+
+        CopyFromTemplate mo ->
+            Sub.map CopyFromTemplateMsg (Gallery.CopyFromTemplate.subscriptions mo)
 
 
 
@@ -163,6 +177,7 @@ navigationView currentPath =
           , Knight Gallery.Knight.initialModel
           , TryOn Gallery.TryOn.initialModel
           , TaskBoard Gallery.TaskBoard.initialModel
+          , CopyFromTemplate Gallery.CopyFromTemplate.initialModel
           ]
             |> List.map (linkView currentPath)
             |> Html.ul []
@@ -223,6 +238,9 @@ demoView model =
         TaskBoard mo ->
             Html.map TaskBoardMsg (Gallery.TaskBoard.view mo)
 
+        CopyFromTemplate mo ->
+            Html.map CopyFromTemplateMsg (Gallery.CopyFromTemplate.view mo)
+
 
 codeView : Model -> Html.Html Msg
 codeView model =
@@ -244,6 +262,9 @@ codeView model =
 
         TaskBoard _ ->
             toCode "https://raw.githubusercontent.com/annaghi/dnd-list/master/examples/src/Gallery/TaskBoard.elm"
+
+        CopyFromTemplate _ ->
+            toCode "https://raw.githubusercontent.com/annaghi/dnd-list/master/examples/src/Gallery/CopyFromTemplate.elm"
 
 
 toCode : String -> Html.Html msg
@@ -275,6 +296,9 @@ toExample slug =
 
         "taskboard" ->
             TaskBoard Gallery.TaskBoard.initialModel
+
+        "copy-from-template" ->
+            CopyFromTemplate Gallery.CopyFromTemplate.initialModel
 
         _ ->
             Hanoi Gallery.Hanoi.initialModel
@@ -324,4 +348,10 @@ info example =
             { slug = "taskboard"
             , title = "Task board"
             , description = "Two systems - one for the cards and one for the columns."
+            }
+
+        CopyFromTemplate _ ->
+            { slug = "copy-from-template"
+            , title = "Copy from template"
+            , description = "List with groups. The first group is unorderable and contains templates. Dragging a template into the other group drops a copy of the dragged template."
             }
