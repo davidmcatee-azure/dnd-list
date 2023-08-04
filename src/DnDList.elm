@@ -615,7 +615,7 @@ update { beforeUpdate, listen, operation } msg (Model model) list =
         DragEnter dropIndex ->
             case ( model, listen ) of
                 ( Just state, OnDrag ) ->
-                    if state.dragCounter > 1 && state.dragIndex /= dropIndex then
+                    if state.dragCounter > 2 && state.dragIndex /= dropIndex then
                         ( Model (Just (stateUpdate operation dropIndex state))
                         , list
                             |> beforeUpdate state.dragIndex dropIndex

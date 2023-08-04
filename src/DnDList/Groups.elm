@@ -675,7 +675,7 @@ update { beforeUpdate, listen, operation, groups } msg (Model model) list =
         DragEnter dropIndex ->
             case model of
                 Just state ->
-                    if state.dragCounter > 1 && state.dragIndex /= dropIndex then
+                    if state.dragCounter > 2 && state.dragIndex /= dropIndex then
                         let
                             equalGroups : Bool
                             equalGroups =
